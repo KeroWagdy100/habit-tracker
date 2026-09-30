@@ -25,7 +25,7 @@ export function currentUser() {
 export async function getSessionUser() {
   try {
     const result = await api('/api/session');
-    const user = result?.user;
+    const user = result?.user ?? result;
     if (!user || typeof user.username !== 'string' || !['student', 'admin'].includes(user.role)) {
       const error = new Error('تعذر التحقق من بيانات الجلسة. حدّث الصفحة أو سجّل الدخول مرة تانية.');
       error.status = 502;
