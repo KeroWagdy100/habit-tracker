@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(30) UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  role VARCHAR(10) NOT NULL DEFAULT 'student' CHECK (role IN ('student', 'admin')),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tracks (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  track_date DATE NOT NULL,
+  prayer BOOLEAN NOT NULL DEFAULT FALSE,
+  read_bible BOOLEAN NOT NULL DEFAULT FALSE,
+  verse TEXT NOT NULL DEFAULT '',
+  reflection TEXT NOT NULL DEFAULT '',
+  UNIQUE (user_id, track_date)
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+  token TEXT PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  expires_at TIMESTAMP NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS sessions_expires_at_idx ON sessions (expires_at);

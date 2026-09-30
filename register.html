@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#143054">
+    <title>إنشاء حساب — طا اككليسيا</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script defer src="/js/config.js"></script>
+    <script defer src="/js/api.js"></script>
+    <script defer src="/js/auth.js"></script>
+</head>
+
+<body>
+    <main class="auth-wrap"><a class="brand auth-brand" href="/" aria-label="الصفحة الرئيسية"><img data-app-logo
+                alt="شعار طا اككليسيا"><span>طا اككليسيا</span></a>
+        <section class="auth-card">
+            <p class="eyebrow">بداية جديدة</p>
+            <h1>افتح حساب جديد</h1>
+            <!-- <h1>افسح مساحة<br>للي يهمك.</h1> -->
+            <form id="register-form" novalidate><label for="username">اسم المستخدم<input id="username" name="username"
+                        autocomplete="username" required minlength="2" maxlength="30" pattern="[A-Za-z0-9_]+"
+                        dir="ltr"><small>من حرفين إلى ٣٠ حرفًا أو رقمًا أو علامة سفلية.</small></label><label
+                    for="password">كلمة المرور<input id="password" name="password" type="password"
+                        autocomplete="new-password" required minlength="8" maxlength="72" dir="ltr"><small>استخدم ٨ أحرف
+                        على الأقل.</small></label>
+                <p class="form-message" aria-live="polite"></p><button class="button full" type="submit">إنشاء الحساب
+                    <span aria-hidden="true">←</span></button>
+            </form>
+            <p class="auth-foot">عندك حساب بالفعل؟ <a href="/login.html">سجّل الدخول</a></p>
+        </section><a class="back-link" href="/">العودة للصفحة الرئيسية</a>
+    </main>
+</body>
+
+</html>

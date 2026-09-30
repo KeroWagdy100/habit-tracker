@@ -1,0 +1,21 @@
+{
+  "name": "habit-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A simple student habit tracker built with Netlify Functions and Neon PostgreSQL.",
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "dependencies": {
+    "@neon/config": "^1.8.3",
+    "@neon/env": "^1.4.8",
+    "@neondatabase/serverless": "^1.0.0",
+    "bcryptjs": "^3.0.2"
+  },
+  "devDependencies": {
+    "netlify-cli": "^23.0.0"
+  },
+  "allowScripts": {
+    "esbuild": true
+  }
+}

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#143054">
+    <title>متابعتي — طا اككليسيا</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script defer src="/js/config.js"></script>
+    <script defer src="/js/api.js"></script>
+    <script defer src="/shared/habits.js"></script>
+    <script defer src="/js/ui.js"></script>
+    <script defer src="/js/student.js"></script>
+</head>
+
+<body>
+    <div class="app-shell">
+        <header class="topbar"><a class="brand" href="/" aria-label="طا اككليسيا - الصفحة الرئيسية"><img data-app-logo
+                    alt="شعار طا اككليسيا"><span>طا اككليسيا</span></a><button class="quiet-button" data-logout>تسجيل
+                الخروج
+                <span aria-hidden="true">←</span></button></header>
+        <main class="dashboard">
+            <p class="eyebrow" id="today-date">النهارده</p>
+            <h1>أهلًا بيك، <span id="username" dir="ltr">صديقنا</span></h1>
+            <p></p>
+            <!-- <p class="intro">خد يومك بهدوء، وكل طا اككليسيا صغيرة بتفرق.</p> -->
+            <section class="panel today-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">متابعتك اليومية</p>
+                        <h2>متابعة النهاردة</h2>
+                    </div><span class="count-pill" id="today-count">٠ / ٢</span>
+                </div>
+                <form id="track-form" novalidate>
+                    <div id="habits-list" class="habits-list"></div>
+                    <p class="form-message" aria-live="polite"></p><button class="button" type="submit">حفظ المتابعة
+                        <span aria-hidden="true">←</span></button>
+                </form>
+            </section>
+            <section class="history-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">أيام فاتت</p>
+                        <h2>المتابعات السابقة</h2>
+                    </div>
+                </div>
+                <div id="history-list" class="history-list">
+                    <p class="empty-state">جارٍ تحميل المتابعات…</p>
+                </div>
+            </section>
+        </main>
+        <footer class="app-footer"><span>مُبَارَكٌ الرَّبُّ، لأَنَّهُ سَمِعَ صَوْتَ تَضَرُّعِي</span><span aria-hidden="true">✳</span></footer>
+    </div>
+</body>
+
+</html>
