@@ -44,10 +44,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--dark-blue); text-decoration: none; font-weight: 700; font-size: 20px; }
 .brand img { width: 58px; height: 58px; object-fit: contain; }
 .hero { position: relative; z-index: 1; width: min(690px, 100%); padding: clamp(155px, 20vh, 220px) 0 70px; margin-inline: 14vw auto; }
-.eyebrow { margin: 0 0 12px; color: var(--dark-blue); font-size: 13px; font-weight: 700; letter-spacing: .04em; }
+.eyebrow { margin: 0 0 12px; color: var(--dark-blue); font-size: 16px; font-weight: 700; letter-spacing: .04em; }
 .hero h1, .auth-card h1, .dashboard h1 { margin: 0; font-size: clamp(42px, 6.5vw, 78px); line-height: 1.25; font-weight: 700; letter-spacing: -.035em; }
 .hero h1 em, .dashboard h1 em { color: var(--orange); font-style: normal; }
-.intro { max-width: 470px; margin: 19px 0 30px; color: var(--blue-muted); font-size: 17px; }
+.intro { max-width: 470px; margin: 19px 0 30px; color: var(--blue-muted); font-size: 22px; }
 .hero-actions { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
 .button {
   min-height: 49px;
