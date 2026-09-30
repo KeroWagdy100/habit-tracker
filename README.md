@@ -20,9 +20,18 @@ Registration always creates a student; the backend rejects a submitted `role`. T
 UPDATE users SET role = 'admin' WHERE username = 'your-admin-username';
 ```
 
-## Deploy
+## Deploy to Netlify
 
-Connect the GitHub repository to Netlify, configure `DATABASE_URL`, and deploy. Netlify publishes the static pages and the functions under `netlify/functions`. Production traffic uses HTTPS. No database credentials are included in the frontend.
+The production Neon database has already been migrated to the current habit fields. It contains the existing user account, so you do not need to run `schema.sql` against production.
+
+1. Sign in to [Netlify](https://app.netlify.com/) and choose **Add new site → Import an existing project**.
+2. Connect GitHub, authorize Netlify if prompted, and select `KeroWagdy100/habit-tracker`.
+3. Keep the repository's Netlify settings: publish directory `.` and functions directory `netlify/functions`. Leave the build command empty; there is no frontend build step.
+4. Before deploying, open the site's **Environment variables** settings and add `DATABASE_URL` with the connection string for the **production** Neon branch. Do not use the temporary `rtl-habits-test-20260930` branch or commit the connection string. Make it available to Netlify Functions (all deploy contexts is simplest).
+5. Deploy the site. Netlify will publish the static pages and package the functions. The `netlify.toml` file configures the `/api/*` routes.
+6. Open the Netlify URL and test registration/login and the student dashboard. Promote an existing account to admin using the SQL under [Admin account](#admin-account), then sign in with it and verify the admin page.
+
+Future pushes to the connected production branch will trigger new deploys. Netlify serves the site over HTTPS; no custom domain is required. Never put `DATABASE_URL` in frontend files or GitHub.
 
 ## Logo, habits, and API
 
