@@ -24,8 +24,13 @@ function statusCell(row, value, label) {
 }
 
 async function initAdmin() {
-  const user = currentUser();
-  if (!user) { location.replace('/login.html'); return; }
+  let user;
+  try { user = await getSessionUser(); }
+  catch (error) {
+    if (error.status === 401) location.replace('/login.html');
+    else adminMessage.textContent = error.message;
+    return;
+  }
   if (user.role !== 'admin') { location.replace('/student.html'); return; }
   document.querySelector('#admin-date').textContent = formatArabicDate(localToday);
   try {
@@ -98,5 +103,5 @@ todayBody.addEventListener('click', (event) => {
 });
 
 initAdmin();
-import { api, currentUser, USER_KEY } from './api.js';
+import { api, getSessionUser, USER_KEY } from './api.js';
 import { formatArabicDate, renderTrackCards } from './ui.js';

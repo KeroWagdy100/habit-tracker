@@ -10,12 +10,27 @@ export async function api(path, options = {}) {
   }
   let data;
   try { data = await response.json(); } catch { data = {}; }
-  if (!response.ok) throw new Error(data.error || 'حصلت مشكلة، حاول مرة تانية.');
+  if (!response.ok) {
+    const error = new Error(data.error || 'حصلت مشكلة، حاول مرة تانية.');
+    error.status = response.status;
+    throw error;
+  }
   return data;
 }
 
 export function currentUser() {
   try { return JSON.parse(sessionStorage.getItem('habit-tracker-user') || 'null'); } catch { return null; }
+}
+
+export async function getSessionUser() {
+  try {
+    const result = await api('/api/session');
+    sessionStorage.setItem(USER_KEY, JSON.stringify(result.user));
+    return result.user;
+  } catch (error) {
+    if (error.status === 401) sessionStorage.removeItem(USER_KEY);
+    throw error;
+  }
 }
 
 export async function logout() {

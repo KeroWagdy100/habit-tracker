@@ -62,8 +62,13 @@ function setTrackMessage(text, success = false) {
 }
 
 async function init() {
-  const user = currentUser();
-  if (!user) { location.replace('/login.html'); return; }
+  let user;
+  try { user = await getSessionUser(); }
+  catch (error) {
+    if (error.status === 401) location.replace('/login.html');
+    else setTrackMessage(error.message);
+    return;
+  }
   if (user.role === 'admin') { location.replace('/admin.html'); return; }
   document.querySelector('#username').textContent = user.username;
   document.querySelector('#today-date').textContent = new Date().toLocaleDateString('ar-EG', { weekday: 'long', month: 'long', day: 'numeric' });
@@ -98,5 +103,5 @@ async function loadTracks() {
 
 init();
 import { HABITS } from '../shared/habits.js';
-import { api, currentUser, USER_KEY } from './api.js';
+import { api, getSessionUser, USER_KEY } from './api.js';
 import { renderTrackCards } from './ui.js';
