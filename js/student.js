@@ -61,12 +61,23 @@ function setTrackMessage(text, success = false) {
   message.classList.toggle('success', success);
 }
 
+function setHistoryMessage(text) {
+  const status = document.createElement('p');
+  status.className = 'empty-state';
+  status.setAttribute('role', 'status');
+  status.textContent = text;
+  historyNode.replaceChildren(status);
+}
+
 async function init() {
   let user;
   try { user = await getSessionUser(); }
   catch (error) {
     if (error.status === 401) location.replace('/login.html');
-    else setTrackMessage(error.message);
+    else {
+      setTrackMessage(error.message);
+      setHistoryMessage(error.message);
+    }
     return;
   }
   if (user.role === 'admin') { location.replace('/admin.html'); return; }
@@ -96,8 +107,11 @@ async function loadTracks() {
     if (current) renderHabitForm(current);
     renderTrackCards(historyNode, tracks.filter((item) => item.date !== localDate));
   } catch (error) {
-    if (error.message.includes('سجّل دخولك')) { sessionStorage.removeItem(USER_KEY); location.replace('/login.html'); }
-    else setTrackMessage(error.message);
+    if (error.status === 401) { sessionStorage.removeItem(USER_KEY); location.replace('/login.html'); }
+    else {
+      setTrackMessage(error.message);
+      setHistoryMessage(error.message);
+    }
   }
 }
 

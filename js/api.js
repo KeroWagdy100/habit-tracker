@@ -25,8 +25,14 @@ export function currentUser() {
 export async function getSessionUser() {
   try {
     const result = await api('/api/session');
-    sessionStorage.setItem(USER_KEY, JSON.stringify(result.user));
-    return result.user;
+    const user = result?.user;
+    if (!user || typeof user.username !== 'string' || !['student', 'admin'].includes(user.role)) {
+      const error = new Error('تعذر التحقق من بيانات الجلسة. حدّث الصفحة أو سجّل الدخول مرة تانية.');
+      error.status = 502;
+      throw error;
+    }
+    sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+    return user;
   } catch (error) {
     if (error.status === 401) sessionStorage.removeItem(USER_KEY);
     throw error;
