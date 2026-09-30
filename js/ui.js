@@ -1,3 +1,5 @@
+import { HABITS } from '../shared/habits.js';
+
 export function formatArabicDate(iso) {
   return new Date(`${iso}T12:00:00`).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' });
 }
