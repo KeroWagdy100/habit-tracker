@@ -1,12 +1,10 @@
-const SESSION_KEY = 'habit-tracker-session';
+export const USER_KEY = 'habit-tracker-user';
 
-async function api(path, options = {}) {
-  const token = sessionStorage.getItem(SESSION_KEY);
+export async function api(path, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...options.headers };
-  if (token) headers.Authorization = `Bearer ${token}`;
   let response;
   try {
-    response = await fetch(path, { ...options, headers, cache: 'no-store' });
+    response = await fetch(path, { ...options, headers, cache: 'no-store', credentials: 'same-origin' });
   } catch (_) {
     throw new Error('تعذر الاتصال بالخدمة. تأكد من اتصالك بالإنترنت وحاول مرة تانية.');
   }
@@ -16,14 +14,13 @@ async function api(path, options = {}) {
   return data;
 }
 
-function currentUser() {
+export function currentUser() {
   try { return JSON.parse(sessionStorage.getItem('habit-tracker-user') || 'null'); } catch { return null; }
 }
 
-async function logout() {
+export async function logout() {
   try { await api('/api/logout', { method: 'POST' }); } catch (_) {}
-  sessionStorage.removeItem(SESSION_KEY);
-  sessionStorage.removeItem('habit-tracker-user');
+  sessionStorage.removeItem(USER_KEY);
   location.href = '/login.html';
 }
 

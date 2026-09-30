@@ -25,7 +25,7 @@ function statusCell(row, value, label) {
 
 async function initAdmin() {
   const user = currentUser();
-  if (!sessionStorage.getItem(SESSION_KEY) || !user) { location.replace('/login.html'); return; }
+  if (!user) { location.replace('/login.html'); return; }
   if (user.role !== 'admin') { location.replace('/student.html'); return; }
   document.querySelector('#admin-date').textContent = formatArabicDate(localToday);
   try {
@@ -60,7 +60,7 @@ async function initAdmin() {
     });
   } catch (error) {
     adminMessage.textContent = error.message;
-    if (error.message.includes('سجّل دخولك')) { sessionStorage.removeItem(SESSION_KEY); location.replace('/login.html'); }
+    if (error.message.includes('سجّل دخولك')) { sessionStorage.removeItem(USER_KEY); location.replace('/login.html'); }
   }
 }
 
@@ -98,3 +98,5 @@ todayBody.addEventListener('click', (event) => {
 });
 
 initAdmin();
+import { api, currentUser, USER_KEY } from './api.js';
+import { formatArabicDate, renderTrackCards } from './ui.js';

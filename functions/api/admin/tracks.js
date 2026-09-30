@@ -1,16 +1,15 @@
-const { db, response, methodNotAllowed, authenticate, dateOnly, track } = require('./_lib');
+import { db, response, methodNotAllowed, authenticate, dateOnly, track, safeError } from '../../_lib.js';
 
-exports.handler = async (event) => {
-  if (event.httpMethod === 'OPTIONS') return response(204, {});
-  if (event.httpMethod !== 'GET') return methodNotAllowed();
+export async function onRequest(context) {
+  if (context.request.method !== 'GET') return methodNotAllowed();
   try {
-    const admin = await authenticate(event);
+    const admin = await authenticate(context);
     if (!admin) return response(401, { error: 'سجّل دخولك للمتابعة.' });
     if (admin.role !== 'admin') return response(403, { error: 'هذه الصفحة متاحة للمشرفين فقط.' });
-    const sql = db();
-    const { studentId } = event.queryStringParameters || {};
-    if (studentId !== undefined && !/^\d+$/.test(studentId)) return response(400, { error: 'اختيار الطالب غير صالح.' });
-    if (studentId !== undefined) {
+    const sql = db(context.env);
+    const studentId = new URL(context.request.url).searchParams.get('studentId');
+    if (studentId !== null && !/^\d+$/.test(studentId)) return response(400, { error: 'اختيار الطالب غير صالح.' });
+    if (studentId !== null) {
       const students = await sql`SELECT id, username FROM users WHERE id = ${Number(studentId)} AND role = 'student'`;
       if (!students[0]) return response(404, { error: 'الطالب غير موجود.' });
       const rows = await sql`SELECT track_date, prayer, read_bible, verse, reflection FROM tracks WHERE user_id = ${Number(studentId)} ORDER BY track_date DESC`;
@@ -31,7 +30,6 @@ exports.handler = async (event) => {
       has_reflection: row.has_reflection ?? false
     })));
   } catch (error) {
-    console.error('Admin request failed:', error.message);
-    return response(500, { error: 'تعذر تحميل بيانات المشرف.' });
+    return safeError('Admin request failed', error, 'تعذر تحميل بيانات المشرف.');
   }
-};
+}

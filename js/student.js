@@ -63,7 +63,7 @@ function setTrackMessage(text, success = false) {
 
 async function init() {
   const user = currentUser();
-  if (!sessionStorage.getItem(SESSION_KEY) || !user) { location.replace('/login.html'); return; }
+  if (!user) { location.replace('/login.html'); return; }
   if (user.role === 'admin') { location.replace('/admin.html'); return; }
   document.querySelector('#username').textContent = user.username;
   document.querySelector('#today-date').textContent = new Date().toLocaleDateString('ar-EG', { weekday: 'long', month: 'long', day: 'numeric' });
@@ -91,9 +91,12 @@ async function loadTracks() {
     if (current) renderHabitForm(current);
     renderTrackCards(historyNode, tracks.filter((item) => item.date !== localDate));
   } catch (error) {
-    if (error.message.includes('سجّل دخولك')) { sessionStorage.removeItem(SESSION_KEY); location.replace('/login.html'); }
+    if (error.message.includes('سجّل دخولك')) { sessionStorage.removeItem(USER_KEY); location.replace('/login.html'); }
     else setTrackMessage(error.message);
   }
 }
 
 init();
+import { HABITS } from '../shared/habits.js';
+import { api, currentUser, USER_KEY } from './api.js';
+import { renderTrackCards } from './ui.js';

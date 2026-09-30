@@ -1,40 +1,48 @@
 # Daily Practice — Habit Tracker
 
-A small student habit tracker using static HTML/CSS/vanilla JavaScript, Netlify Functions, and Neon PostgreSQL.
+A simple Arabic RTL habit tracker for students.
+
+- **Frontend:** Vanilla HTML, CSS, and JavaScript
+- **Backend:** Cloudflare Pages Functions
+- **Database:** Neon PostgreSQL
+- **Hosting:** Cloudflare Pages
+
+The Pages Functions live under `functions/` and provide `/api/register`, `/api/login`, `/api/logout`, `/api/tracks`, and `/api/admin/tracks`. Admin history is requested with the `studentId` query parameter. The functions use the authenticated server-side session to determine identity and ownership.
+
+## Database
+
+The existing Neon database is retained. The current schema uses `users`, `tracks`, and `sessions`; tracks contain `prayer`, `read_bible`, `verse`, and `reflection`, with one track per student per date. Existing users and tracks are not recreated by this project. `schema.sql` is only for a new empty database. The historical migration is documented in [`migrations/20260930_habit_fields.sql`](migrations/20260930_habit_fields.sql); it is not needed for the already-migrated production database.
+
+The additive [`migrations/20260930_enable_pgcrypto.sql`](migrations/20260930_enable_pgcrypto.sql) enables PostgreSQL's `pgcrypto` extension. It does not alter application rows. This is required for login/registration: Neon performs bcrypt password hashing and verification in the database, keeping CPU-heavy password work outside Cloudflare's 10 ms Free Worker CPU allowance. This migration has been applied to production.
 
 ## Local setup
 
-1. Create a free Neon PostgreSQL project and copy its connection string.
-2. Run [`schema.sql`](schema.sql) in the Neon SQL Editor for a new database. For an existing database, run [`migrations/20260930_habit_fields.sql`](migrations/20260930_habit_fields.sql) to rename the prayer and Bible fields, add the verse and reflection fields, and preserve the discontinued Study and Exercise values in `track_legacy_habits`.
-3. Install dependencies with `npm install`.
-4. Keep the Neon-generated `.env.local` in the project root (it is ignored by Git). Netlify Dev reads it automatically. If needed, copy it to `.env`, which is also ignored.
-5. Start the local Netlify environment with `npm run dev` and open the URL shown by Netlify.
+1. Install Node.js and npm, then run `npm install`.
+2. Copy `.dev.vars.example` to `.dev.vars` and set `DATABASE_URL` to the Neon connection string for the branch you want to use locally. Use a development/test branch while testing. `.dev.vars` is ignored by Git.
+3. Start Cloudflare Pages locally with `npm run dev`, then open the Wrangler URL (normally `http://localhost:8788`). This serves the static pages and runs Pages Functions from `functions/`.
 
-Netlify Dev reads `.env` for local function environment variables. In production, set `DATABASE_URL` in the Netlify site's environment variables.
+Only `DATABASE_URL` is required. There is no separate session secret: tokens are generated with Cloudflare's cryptographic API and stored in the existing PostgreSQL `sessions` table. The browser receives the session only as a `Secure`, `HttpOnly`, `SameSite=Lax` cookie. Password hashes use PostgreSQL's bcrypt-compatible `pgcrypto` functions; existing bcryptjs hashes remain valid. Do not expose `DATABASE_URL` in frontend files.
 
 ## Admin account
 
-Registration always creates a student; the backend rejects a submitted `role`. To promote a user manually, run this in the Neon SQL Editor:
+Registration always creates a student and rejects any submitted role. To promote an existing account, run this statement in the Neon SQL Editor:
 
 ```sql
 UPDATE users SET role = 'admin' WHERE username = 'your-admin-username';
 ```
 
-## Deploy to Netlify
+## Deploy to Cloudflare Pages
 
-The production Neon database has already been migrated to the current habit fields. It contains the existing user account, so you do not need to run `schema.sql` against production.
+1. Push the project to GitHub and create a Pages project in Cloudflare using **Workers & Pages → Create → Pages → Connect to Git**. Select the repository and production branch.
+2. Set the root directory to the repository root and the framework preset to **None**. Leave the build command blank and set the build output directory to `.`. `wrangler.toml` records the Pages output directory and compatibility date.
+3. In the Pages project's **Settings → Variables and Secrets**, add `DATABASE_URL` as an encrypted secret for the production environment. Use the existing production Neon branch connection string. If you enable preview deployments, configure a separate test-branch value for Preview; avoid pointing previews at production.
+4. Deploy. Pages detects the root `functions/` directory and installs its routes alongside the static site. Subsequent pushes to the connected branch deploy automatically.
+5. Test registration, login, save/update, history, admin access, and logout on the Cloudflare URL. The production data remains in Neon.
 
-1. Sign in to [Netlify](https://app.netlify.com/) and choose **Add new site → Import an existing project**.
-2. Connect GitHub, authorize Netlify if prompted, and select `KeroWagdy100/habit-tracker`.
-3. Keep the repository's Netlify settings: publish directory `.` and functions directory `netlify/functions`. Leave the build command empty; there is no frontend build step.
-4. Before deploying, open the site's **Environment variables** settings and add `DATABASE_URL` with the connection string for the **production** Neon branch. Do not use the temporary `rtl-habits-test-20260930` branch or commit the connection string. Make it available to Netlify Functions (all deploy contexts is simplest).
-5. Deploy the site. Netlify will publish the static pages and package the functions. The `netlify.toml` file configures the `/api/*` routes.
-6. Open the Netlify URL and test registration/login and the student dashboard. Promote an existing account to admin using the SQL under [Admin account](#admin-account), then sign in with it and verify the admin page.
+You can also deploy manually after authenticating Wrangler with Cloudflare using `npm run deploy`. For Git-connected deployment, use the Pages dashboard workflow above.
 
-Future pushes to the connected production branch will trigger new deploys. Netlify serves the site over HTTPS; no custom domain is required. Never put `DATABASE_URL` in frontend files or GitHub.
+Cloudflare Pages static asset requests are free and Pages Functions use the Workers Free request quota (currently 100,000 requests per day). Free tier allowances can change; check [Cloudflare pricing](https://developers.cloudflare.com/workers/platform/pricing/) and [Neon pricing](https://neon.com/pricing) for current limits.
 
-## Logo, habits, and API
+## Logo and habits
 
-Place the PNG logo in `assets/logo.png` or edit `LOGO_PATH` in `js/config.js`. The four shared habits are defined in `shared/habits.js`; that file is used by the browser and backend. API routes are `/api/register`, `/api/login`, `/api/logout`, `/api/tracks`, and `/api/admin/tracks` (admin history uses a `studentId` query parameter, validated and authorized server-side).
-
-The session token is held in browser `sessionStorage` and expires after 30 days; passwords are never persisted client-side. Sessions and all track authorization are checked by the backend.
+The logo is served from `assets/logo.png`; replace that file to change the image. Shared habit keys and Arabic labels live in `shared/habits.js`.

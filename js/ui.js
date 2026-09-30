@@ -1,8 +1,8 @@
-function formatArabicDate(iso) {
+export function formatArabicDate(iso) {
   return new Date(`${iso}T12:00:00`).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-function renderTrackCards(container, tracks) {
+export function renderTrackCards(container, tracks) {
   container.querySelectorAll(':scope > .track-card, :scope > .empty-state').forEach((node) => node.remove());
   if (!tracks.length) {
     const empty = document.createElement('p');

@@ -30,8 +30,7 @@ document.querySelector('#login-form')?.addEventListener('submit', async (event) 
   showFormMessage(form, 'جارٍ تسجيل الدخول…');
   try {
     const result = await api('/api/login', { method: 'POST', body: JSON.stringify({ username: values.get('username'), password: values.get('password') }) });
-    sessionStorage.setItem(SESSION_KEY, result.token);
-    sessionStorage.setItem('habit-tracker-user', JSON.stringify(result.user));
+    sessionStorage.setItem(USER_KEY, JSON.stringify(result.user));
     location.href = result.user.role === 'admin' ? '/admin.html' : '/student.html';
   } catch (error) { showFormMessage(form, error.message); button.disabled = false; }
 });
@@ -51,3 +50,4 @@ document.querySelector('#register-form')?.addEventListener('submit', async (even
     window.setTimeout(() => { location.href = '/login.html'; }, 900);
   } catch (error) { showFormMessage(form, error.message); button.disabled = false; }
 });
+import { api, USER_KEY } from './api.js';
